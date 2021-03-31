@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         HWZ Infinite Thread
 // @namespace    https://forums.hardwarezone.com.sg/infinite/scrolling
-// @version      0.2
+// @version      0.3
 // @description  Infinite Thread implementation
 // @author       davidktw
 // @match        https://forums.hardwarezone.com.sg/threads/*
@@ -18,7 +18,6 @@
     // get current page
     const url       = window.location.href;
     const pageregex = /page-(\d+)/;
-    let suspend     = false;
     let currentpage = 1;
     let urlprefix;
     let pagematch;
@@ -29,11 +28,44 @@
     else
         urlprefix   = url;
 
+    // global attribute
+    document.documentElement.setAttribute("data-infinitescrolling", true);
+
     // add in end of displayed articles detector
     const infinite_div  = document.createElement("div");
     infinite_div.id   = "infinite";
     const [ after_div ] = document.querySelectorAll("div.block-outer--after");
     after_div.parentElement.insertBefore(infinite_div, after_div);
+
+    if (url.match(threadsregex)) {
+        // buttons to resume infinite scrolling
+        const resume_parents = document.querySelectorAll("ul.pageNav-main");
+        resume_parents.forEach(p => {
+            const resume_div  = document.createElement("li");
+            resume_div.innerHTML = "<a href='javascript:void(0)'>Resume Infinite Scroll</a>";
+            resume_div.classList.add("pageNav-page");
+            p.insertBefore(resume_div, null);
+            resume_div.addEventListener("click", () => {
+                document.documentElement.setAttribute("data-infinitescrolling", true);
+                resume_div.scrollIntoView(false);
+                window.scrollBy(0, -1.5 * resume_div.getHeight());
+            });
+        });
+    }
+
+
+    //document.queryselector(".fr-element.fr-view").addEventListener("focus", (event) => console.log(event));
+    window.addEventListener('load', () => {
+        //document.documentElement.setAttribute("data-infinitescrolling", "true");
+        document.querySelectorAll(".fr-element.fr-view").forEach((node) => {
+            node.addEventListener("focus", (event) => {
+                if (event.type === "focus") {
+                    document.documentElement.setAttribute("data-infinitescrolling", false);
+                }
+                console.log(event.type)
+            });
+        });
+    });
 
     const options = {
         root: null,
@@ -42,8 +74,9 @@
     }
     const observer = new IntersectionObserver(async (entries, myobserver) => {
 
+        const suspend = document.documentElement.getAttribute("data-infinitescrolling") === "false";
         if (suspend) return;
-        suspend = true;
+        document.documentElement.setAttribute("data-infinitescrolling", false);
 
         const newpageurl = urlprefix + 'page-' + (currentpage + 1);
         const newpage = await fetch(newpageurl, { redirect: 'manual' });
@@ -74,7 +107,7 @@
             entries.forEach(t => myobserver.unobserve(t.target));
         }
 
-        suspend = false;
+        document.documentElement.setAttribute("data-infinitescrolling", true);
 
     }, options);
     observer.observe(document.querySelector('#infinite'));
