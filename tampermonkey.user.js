@@ -1,15 +1,19 @@
 // ==UserScript==
 // @name         HWZ Infinite Thread
-// @namespace    https://forums.hardwarezone.com.sg/threads/
-// @version      0.1
+// @namespace    https://forums.hardwarezone.com.sg/infinite/scrolling
+// @version      0.2
 // @description  Infinite Thread implementation
 // @author       davidktw
 // @match        https://forums.hardwarezone.com.sg/threads/*
+// @match        https://forums.hardwarezone.com.sg/forums/*
 // @grant        none
 // ==/UserScript==
 
 (function() {
     'use strict';
+
+    const forumsregex  = /\/forums\//;
+    const threadsregex = /\/threads\//;
 
     // get current page
     const url       = window.location.href;
@@ -20,10 +24,10 @@
     let pagematch;
     if (pagematch = pageregex.exec(url)) {
         currentpage = parseInt(pagematch[1]);
-        urlprefix = url.replace(pageregex, '');
+        urlprefix   = url.replace(pageregex, '');
     }
     else
-        urlprefix = url;
+        urlprefix   = url;
 
     // add in end of displayed articles detector
     const infinite_div  = document.createElement("div");
@@ -42,18 +46,24 @@
         suspend = true;
 
         const newpageurl = urlprefix + 'page-' + (currentpage + 1);
-
-        //console.log("CURRENTPAGE=" + currentpage);
-        //console.log("FETCH=" + newpageurl);
-
         const newpage = await fetch(newpageurl, { redirect: 'manual' });
-        if (newpage.ok) {
 
+        if (newpage.ok) {
             const newpagetext                     = await newpage.text();
             const parser                          = new DOMParser();
             const newpagedoc                      = parser.parseFromString(newpagetext, 'text/html');
-            const [ currpage_articles_container ] = document.querySelectorAll(".block-body.js-replyNewMessageContainer");
-            const [ newpage_articles_container ]  = newpagedoc.querySelectorAll(".block-body.js-replyNewMessageContainer");
+
+            let currpage_articles_container;
+            let newpage_articles_container;
+            if (url.match(threadsregex)) {
+                [ currpage_articles_container ] = document.querySelectorAll("div.block-body.js-replyNewMessageContainer");
+                [ newpage_articles_container ]  = newpagedoc.querySelectorAll("div.block-body.js-replyNewMessageContainer");
+            }
+            else if (url.match(forumsregex)) {
+                [ currpage_articles_container ] = document.querySelectorAll("div.structItemContainer-group.js-threadList");
+                [ newpage_articles_container ]  = newpagedoc.querySelectorAll("div.structItemContainer-group.js-threadList");
+            }
+
             Array.from(newpage_articles_container.children).forEach(n => currpage_articles_container.appendChild(n));
             currentpage++;
         }
@@ -61,7 +71,9 @@
             //console.log("reach end of thread");
             entries.forEach(t => myobserver.unobserve(t.target));
         }
+
         suspend = false;
+
     }, options);
     observer.observe(document.querySelector('#infinite'));
 })();
