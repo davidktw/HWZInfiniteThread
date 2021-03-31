@@ -17,7 +17,7 @@
 
     // get current page
     const url       = window.location.href;
-    const pageregex = /\/page-(\d+)/;
+    const pageregex = /page-(\d+)/;
     let suspend     = false;
     let currentpage = 1;
     let urlprefix;
@@ -47,6 +47,8 @@
 
         const newpageurl = urlprefix + 'page-' + (currentpage + 1);
         const newpage = await fetch(newpageurl, { redirect: 'manual' });
+
+        console.log("OK " + newpageurl);
 
         if (newpage.ok) {
             const newpagetext                     = await newpage.text();
