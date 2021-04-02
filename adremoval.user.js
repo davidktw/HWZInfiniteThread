@@ -8,15 +8,15 @@
 // @grant        none
 // ==/UserScript==
 
-var dksg_runs = 0;
-var dksg_inserted = 0
+var n_runs = 0;
+var n_inserted = 0
 var ff;
 
 function f($) {
     if (typeof jQuery == "function") {
 
-        if (dksg_inserted == 0) {
-            dksg_inserted = 1;
+        if (n_inserted == 0) {
+            n_inserted = 1;
             $.expr[':'].regex = function(elem, index, match) {
                 let matchParams = match[3].split(','),
                     validLabels = /^(data|css):/,
@@ -67,13 +67,14 @@ function f($) {
         $("div.gpt-ad-fpi-container").css("margin", "2px auto");
         $(".actionBar-action").css("padding", "0px 2px");
         $(".bbCodeBlock").css("padding", "0");
+        $(".structItem-cell").css("padding", "1px");
 
     }
 
-    dksg_runs++;
-    console.log(dksg_runs);
-    if (dksg_runs < 20) {
-        setTimeout(ff, 500);
+    n_runs++;
+    console.debug(n_runs);
+    if (n_runs < 20) {
+        setTimeout(ff, parseInt(100 + 50 * n_runs));
     }
 }
 
@@ -87,7 +88,6 @@ function f($) {
     s.innerText = "jQuery.noConflict()";
     document.head.appendChild(s);
 
-    ff = f.bind(null,jQuery);
-
+    ff = f.bind(null, jQuery);
     setTimeout(ff, 0);
 })();
