@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         HWZ Ad Removal
 // @namespace    https://forums.hardwarezone.com.sg/ad-removal
-// @version      0.1
+// @version      0.2
 // @description  Remove Ads and whitespace removal
 // @author       You
 // @match        https://forums.hardwarezone.com.sg/*
@@ -58,17 +58,6 @@ function f($) {
         $("h2.block-header").remove();
         $("div.shareButtons").parent().remove();
         $("div.popular-body-inner").remove();
-
-        $("div.p-body-content").css("width","100%");
-        $("div.p-body-content").css("padding","0");
-        $("div.p-body").css("display","block");
-        $("div.p-body-inner").css("max-width","100%");
-        $("div.message-cell").css("padding", "5px");
-        $("div.gpt-ad-fpi-container").css("margin", "2px auto");
-        $(".actionBar-action").css("padding", "0px 2px");
-        $(".bbCodeBlock").css("padding", "0");
-        $(".structItem-cell").css("padding", "1px");
-
     }
 
     n_runs++;
@@ -87,6 +76,41 @@ function f($) {
     s = document.createElement('script');
     s.innerText = "jQuery.noConflict()";
     document.head.appendChild(s);
+
+    s = document.createElement('style');
+    s.innerText = `
+.message-signature img {
+  max-width: 100px;
+}
+div.p-body-content {
+  width: 100%;
+  padding: 0;
+}
+div.p-body {
+  display: block;
+}
+div.p-body-inner {
+  max-width: 100%;
+}
+div.message-cell {
+  padding: 5px;
+}
+div.gpt-ad-fpi-container {
+  margin: 2px auto;
+}
+.actionBar-action {
+  padding: 0px 2px;
+}
+.bbCodeBlock {
+  padding: 0
+}
+.structItem-cell {
+  padding: 1px;
+}
+`;
+    document.head.appendChild(s);
+
+
 
     ff = f.bind(null, jQuery);
     setTimeout(ff, 0);
