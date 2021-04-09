@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         HWZ Ad Removal
 // @namespace    https://forums.hardwarezone.com.sg/ad-removal
-// @version      0.2
+// @version      0.3
 // @description  Remove Ads and whitespace removal
 // @author       You
 // @match        https://forums.hardwarezone.com.sg/*
@@ -62,7 +62,7 @@ function f($) {
 
     n_runs++;
     console.debug(n_runs);
-    if (n_runs < 20) {
+    if (n_runs < 10) {
         setTimeout(ff, parseInt(100 + 50 * n_runs));
     }
 }
@@ -70,15 +70,8 @@ function f($) {
 (function() {
     'use strict';
 
-    let s = document.createElement('script');
-    s.setAttribute('src','//code.jquery.com/jquery-3.6.0.slim.min.js');
-    document.head.appendChild(s);
-    s = document.createElement('script');
-    s.innerText = "jQuery.noConflict()";
-    document.head.appendChild(s);
-
-    s = document.createElement('style');
-    s.innerText = `
+    let s = document.createElement('style');
+    let csstext = `
 .message-signature img {
   max-width: 100px;
 }
@@ -107,10 +100,28 @@ div.gpt-ad-fpi-container {
 .structItem-cell {
   padding: 1px;
 }
+.avatar.avatar--m {
+  width: 50px;
+  height: 50px;
+  font-size: 30px;
+}
+.actionBar-set.actionBar-set--external .actionBar-action {
+  padding: 0px 3px;
+}
+.message .reactionsBar {
+  padding: 4px;
+}
 `;
+    s.innerText = csstext.replaceAll(/[\r\n]/ig, "");
     document.head.appendChild(s);
 
 
+    s = document.createElement('script');
+    s.setAttribute('src','//code.jquery.com/jquery-3.6.0.slim.min.js');
+    document.head.appendChild(s);
+    s = document.createElement('script');
+    s.innerText = "jQuery.noConflict()";
+    document.head.appendChild(s);
 
     ff = f.bind(null, jQuery);
     setTimeout(ff, 0);
