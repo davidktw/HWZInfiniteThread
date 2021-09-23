@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         HWZ Ad Removal
 // @namespace    https://forums.hardwarezone.com.sg/ad-removal
-// @version      0.4
+// @version      0.5
 // @description  Remove Ads and whitespace removal
 // @author       You
 // @match        https://forums.hardwarezone.com.sg/*
@@ -57,9 +57,28 @@ function f($) {
           div.p-body-sidebar,\
           #sponsored-links-alt,\
           h2.block-header,\
-          div.popular-body-inner").remove();
+          div.popular-body-inner,\
+          .GoogleActiveViewInnerContainer,\
+          .focus-ad,\
+          #hwzForumRelated,\
+          div:regex(id, ^gpt-ad-.*-container$),\
+          div:regex(class, ^gpt-ad-.*-container$)").remove();
 
         Array.from(document.querySelectorAll("section.message-user")).each(i=>i.style.position='relative');
+
+        Array.from(document.querySelectorAll('a[href="/search/"]')).each(i=>{
+            let ni = i.cloneNode(true);
+            i.parentNode.replaceChild(ni, i);
+            ni.addEventListener('click', (event)=>{
+              event.preventDefault();
+              event.stopPropagation();
+              document.location.href = '/search/?type=post';
+            });
+        });
+
+        Array.from(document.querySelectorAll('li.notice img')).each(i=>{
+            i.style.maxHeight = '50px';
+        });
 
         setTimeout(()=>{
             $("img").each(function (i,oo) {oo.setAttribute('loading','lazy')});
@@ -69,8 +88,8 @@ function f($) {
 
     n_runs++;
     console.debug(n_runs);
-    if (n_runs < 10) {
-        setTimeout(ff, parseInt(100 + 50 * n_runs));
+    if (n_runs < 20) {
+        setTimeout(ff, parseInt(50 * n_runs));
     }
 }
 
@@ -106,7 +125,7 @@ div.gpt-ad-fpi-container {
   padding: 0
 }
 .structItem-cell {
-  padding: 1px;
+  padding: 3px 9px;
 }
 .avatar.avatar--m {
   width: 50px;
@@ -119,8 +138,11 @@ div.gpt-ad-fpi-container {
 .message .reactionsBar {
   padding: 4px;
 }
-.node-main {
+.node-body {
   padding: 0;
+}
+.node-main {
+  padding: 5px 12px;
 }
 .block {
   margin-bottom: 10px;
@@ -152,6 +174,27 @@ div.gpt-ad-fpi-container {
     s.setAttribute('src','//cdnjs.cloudflare.com/ajax/libs/loading-attribute-polyfill/1.5.4/loading-attribute-polyfill.min.js');
     document.head.appendChild(s);
 
+
     ff = f.bind(null, jQuery);
     setTimeout(ff, 0);
 })();
+
+
+window.addEventListener('load', (event) => {
+  let search = document.querySelector("input[type=search][class=input]");
+  let mysearchlist = document.createElement("datalist");
+  mysearchlist.id = 'mysearchlist';
+  ['davidktw', 'laybit',
+   'programming', 'programmers', 'programmer',
+   'comp sci', 'computer science', 'computing',
+   'java', 'javascript', 'perl', 'php',
+   'database', 'sql',
+   'cloud', 'aws', 'azure', 'gcp' ].sort().forEach((v)=> {
+    let myopt = document.createElement('option');
+    myopt.value = v;
+    mysearchlist.appendChild(myopt);
+  });
+  document.body.appendChild(mysearchlist);
+  search?.setAttribute('list', 'mysearchlist');
+  console.log('DOM fully loaded and parsed', search);
+});
