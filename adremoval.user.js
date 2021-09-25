@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         HWZ Ad Removal
 // @namespace    https://forums.hardwarezone.com.sg/ad-removal
-// @version      0.5
+// @version      0.6
 // @description  Remove Ads and whitespace removal
 // @author       You
 // @match        https://forums.hardwarezone.com.sg/*
@@ -179,7 +179,7 @@ div.gpt-ad-fpi-container {
     setTimeout(ff, 0);
 })();
 
-
+/*
 window.addEventListener('load', (event) => {
   let search = document.querySelector("input[type=search][class=input]");
   let mysearchlist = document.createElement("datalist");
@@ -198,3 +198,4 @@ window.addEventListener('load', (event) => {
   search?.setAttribute('list', 'mysearchlist');
   console.log('DOM fully loaded and parsed', search);
 });
+*/
