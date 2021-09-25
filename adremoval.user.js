@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         HWZ Ad Removal
 // @namespace    https://forums.hardwarezone.com.sg/ad-removal
-// @version      0.11
+// @version      0.12
 // @description  Remove Ads and whitespace removal
 // @author       You
 // @match        https://forums.hardwarezone.com.sg/*
@@ -17,6 +17,8 @@ var touchstartX = 0
 var touchendX = 0
 var touchstartY = 0
 var touchendY = 0
+var scrollstartY = 0
+var scrollendY = 0
 
 
 function handleGesture() {
@@ -24,8 +26,8 @@ function handleGesture() {
     let maxYdist = 40;
 
     // skip gesture if the swipe is not sufficiently linearly horizontal
-    alert('swiped vert! ' + (touchendY - touchstartY) + 'px');
-    if (Math.abs(touchstartY - touchendY) > maxYdist) {
+    alert('swiped vert! ' + (Math.abs(touchstartY - touchendY) + Math.abs(scrollstartY - scrollendY)) + 'px');
+    if (Math.abs(touchstartY - touchendY) + Math.abs(scrollstartY - scrollendY) > maxYdist) {
         return;
     }
 
@@ -63,11 +65,13 @@ function f($) {
             slider.addEventListener('touchstart', e => {
                 touchstartX = e.changedTouches[0].screenX;
                 touchstartY = e.changedTouches[0].screenY;
+                scrollstartY = window.scrollY;
             })
 
             slider.addEventListener('touchend', e => {
                 touchendX = e.changedTouches[0].screenX;
                 touchendY = e.changedTouches[0].screenY;
+                scrollendY = window.scrollY;
                 handleGesture()
             })
         }
