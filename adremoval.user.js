@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         HWZ Ad Removal
 // @namespace    https://forums.hardwarezone.com.sg/ad-removal
-// @version      0.10
+// @version      0.11
 // @description  Remove Ads and whitespace removal
 // @author       You
 // @match        https://forums.hardwarezone.com.sg/*
@@ -24,6 +24,7 @@ function handleGesture() {
     let maxYdist = 40;
 
     // skip gesture if the swipe is not sufficiently linearly horizontal
+    alert('swiped vert! ' + (touchendY - touchstartY) + 'px');
     if (Math.abs(touchstartY - touchendY) > maxYdist) {
         return;
     }
