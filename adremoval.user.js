@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         HWZ Ad Removal
 // @namespace    https://forums.hardwarezone.com.sg/ad-removal
-// @version      0.6
+// @version      0.7
 // @description  Remove Ads and whitespace removal
 // @author       You
 // @match        https://forums.hardwarezone.com.sg/*
@@ -12,6 +12,9 @@
 var n_runs = 0;
 var n_inserted = 0
 var ff;
+
+var touchstartX = 0
+var touchendX = 0
 
 function f($) {
     if (typeof jQuery == "function") {
@@ -30,6 +33,23 @@ function f($) {
                     regex = new RegExp(matchParams.join('').replace(/^\s+|\s+$/g,''), regexFlags);
                 return regex.test($(elem)[attr.method](attr.property));
             }
+
+            const slider = $(".focus-width")[0];
+
+            //function handleGesture() {
+            //    if (touchendX < touchstartX) alert('swiped left!')
+            //    if (touchendX > touchstartX) alert('swiped right!')
+            //}
+
+            slider.addEventListener('touchstart', e => {
+                touchstartX = e.changedTouches[0].screenX;
+            })
+
+            slider.addEventListener('touchend', e => {
+                touchendX = e.changedTouches[0].screenX;
+                alert("X");
+                //handleGesture()
+            })
         }
 
         document.body.removeClass('gotoverlay');
