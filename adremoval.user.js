@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         HWZ Ad Removal
 // @namespace    https://forums.hardwarezone.com.sg/ad-removal
-// @version      0.7
+// @version      0.8
 // @description  Remove Ads and whitespace removal
 // @author       You
 // @match        https://forums.hardwarezone.com.sg/*
@@ -15,6 +15,12 @@ var ff;
 
 var touchstartX = 0
 var touchendX = 0
+
+
+function handleGesture() {
+    if (touchendX < touchstartX) alert('swiped left!')
+    if (touchendX > touchstartX) alert('swiped right!')
+}
 
 function f($) {
     if (typeof jQuery == "function") {
@@ -36,10 +42,6 @@ function f($) {
 
             const slider = $(".focus-width")[0];
 
-            //function handleGesture() {
-            //    if (touchendX < touchstartX) alert('swiped left!')
-            //    if (touchendX > touchstartX) alert('swiped right!')
-            //}
 
             slider.addEventListener('touchstart', e => {
                 touchstartX = e.changedTouches[0].screenX;
@@ -47,8 +49,7 @@ function f($) {
 
             slider.addEventListener('touchend', e => {
                 touchendX = e.changedTouches[0].screenX;
-                alert("X");
-                //handleGesture()
+                handleGesture()
             })
         }
 
