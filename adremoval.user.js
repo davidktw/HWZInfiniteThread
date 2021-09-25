@@ -18,8 +18,8 @@ var touchendX = 0
 
 
 function handleGesture() {
-    if (touchendX < touchstartX) alert('swiped left!')
-    if (touchendX > touchstartX) alert('swiped right!')
+    if (touchendX < touchstartX) alert('swiped left! ' + (touchstartX - touchendX) + 'px');
+    if (touchendX > touchstartX) alert('swiped right! ' + (touchendX - touchstartX) + 'px')
 }
 
 function f($) {
