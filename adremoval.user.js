@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         HWZ Ad Removal
 // @namespace    https://forums.hardwarezone.com.sg/ad-removal
-// @version      0.14
+// @version      0.15
 // @description  Remove Ads and whitespace removal
 // @author       You
 // @match        https://forums.hardwarezone.com.sg/*
@@ -94,7 +94,12 @@ function f($) {
 
         // remove the loading of javascript overriding of links
         // that go to some kind of collector
-        $("script:regex(src, .*s\.skimresources\.com.*)").remove();
+        $("script:regex(src, .*s\.skimresources\.com.*),\
+           script:regex(src, .*adtag\.sphdigital\.com.*),\
+           script:regex(src, .*secure\.quantserve\.com.*),\
+           script:regex(src, .*www\.googletagmanager\.com.*),\
+           script:regex(src, .*www\.googletagservices\.com.*),\
+           script:regex(src, .*sb\.scorecardresearch\.com.*)").remove();
 
         $("div.hwz-trending-block").parent().remove();
         $("div.shareButtons").parent().remove();
