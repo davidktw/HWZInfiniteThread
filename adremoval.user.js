@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         HWZ Ad Removal
 // @namespace    https://forums.hardwarezone.com.sg/ad-removal
-// @version      0.15
+// @version      0.16
 // @description  Remove Ads and whitespace removal
 // @author       You
 // @match        https://forums.hardwarezone.com.sg/*
@@ -12,6 +12,7 @@
 var n_runs = 0;
 var n_inserted = 0
 var ff;
+var handler = null;
 
 var touchstartX = 0
 var touchendX = 0
@@ -19,6 +20,7 @@ var touchstartY = 0
 var touchendY = 0
 var scrollstartY = 0
 var scrollendY = 0
+var timestart = new Date().getTime();
 
 
 function handleGesture() {
@@ -42,6 +44,7 @@ function handleGesture() {
 }
 
 function f($) {
+    console.log("Running FF");
     if (typeof jQuery == "function") {
 
         if (n_inserted == 0) {
@@ -116,7 +119,8 @@ function f($) {
           .focus-ad,\
           #hwzForumRelated,\
           div:regex(id, ^gpt-ad-.*-container$),\
-          div:regex(class, ^gpt-ad-.*-container$)").remove();
+          div:regex(class, ^gpt-ad-.*-container$),\
+          div:regex(id, ^google_ads_iframe_.*)").remove();
 
         Array.from(document.querySelectorAll("section.message-user")).each(i=>i.style.position='relative');
 
@@ -140,11 +144,11 @@ function f($) {
         },0);
     }
 
-    n_runs++;
-    console.debug(n_runs);
-    if (n_runs < 20) {
-        setTimeout(ff, parseInt(50 * n_runs));
-    }
+    //n_runs++;
+    //console.debug(n_runs);
+    //if (n_runs < 20) {
+    //    setTimeout(ff, parseInt(50 * n_runs));
+    //}
 }
 
 (function() {
@@ -230,7 +234,24 @@ div.gpt-ad-fpi-container {
 
 
     ff = f.bind(null, jQuery);
-    setTimeout(ff, 0);
+
+    // create a new instance of `MutationObserver` named `observer`,
+    // passing it a callback function
+    const observer = new MutationObserver(function(mutationList) {
+        console.debug('callback that runs when observer is triggered ');
+
+        if (handler != null)
+            clearTimeout(handler);
+        handler = setTimeout(ff, 100);
+        if (new Date().getTime() - timestart > 3 * 1000)
+            observer.disconnect();
+
+    });
+
+    // call `observe()` on that MutationObserver instance,
+    // passing it the element to observe, and the options object
+    observer.observe(document.body, {subtree: true, childList: true});
+    handler = setTimeout(ff, 100);
 })();
 
 /*
