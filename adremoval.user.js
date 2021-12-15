@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         HWZ Ad Removal
 // @namespace    https://forums.hardwarezone.com.sg/ad-removal
-// @version      0.16
+// @version      0.17
 // @description  Remove Ads and whitespace removal
 // @author       You
 // @match        https://forums.hardwarezone.com.sg/*
@@ -44,7 +44,7 @@ function handleGesture() {
 }
 
 function f($) {
-    console.log("Running FF");
+    console.debug("Running FF");
     if (typeof jQuery == "function") {
 
         if (n_inserted == 0) {
@@ -243,7 +243,7 @@ div.gpt-ad-fpi-container {
         if (handler != null)
             clearTimeout(handler);
         handler = setTimeout(ff, 100);
-        if (new Date().getTime() - timestart > 3 * 1000)
+        if (new Date().getTime() - timestart > 1.5 * 1000)
             observer.disconnect();
 
     });
