@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         HWZ Ad Removal
 // @namespace    https://forums.hardwarezone.com.sg/ad-removal
-// @version      0.18
+// @version      0.19
 // @description  Remove Ads and whitespace removal
 // @author       You
 // @match        https://forums.hardwarezone.com.sg/*
@@ -77,10 +77,12 @@ function f($) {
             })
             */
 
-            let hammertime = new Hammer($(".focus-width")[0]);
-            hammertime.on('swipe', function(ev) {
-                console.log(ev);
-            });
+            if (Hammer) {
+                let hammertime = new Hammer($(".focus-width")[0]);
+                hammertime.on('swipe', function(ev) {
+                    console.log(ev);
+                });
+            }
         }
 
         document.body.removeClass('gotoverlay');
