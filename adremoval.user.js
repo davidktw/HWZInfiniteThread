@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         HWZ Ad Removal
 // @namespace    https://forums.hardwarezone.com.sg/ad-removal
-// @version      0.19
+// @version      0.20
 // @description  Remove Ads and whitespace removal
 // @author       You
 // @match        https://forums.hardwarezone.com.sg/*
@@ -21,6 +21,7 @@ var touchendY = 0
 var scrollstartY = 0
 var scrollendY = 0
 var timestart = new Date().getTime();
+var hammertime;
 
 
 function handleGesture() {
@@ -76,13 +77,6 @@ function f($) {
                 handleGesture()
             })
             */
-
-            if (Hammer) {
-                let hammertime = new Hammer($(".focus-width")[0]);
-                hammertime.on('swipe', function(ev) {
-                    console.log(ev);
-                });
-            }
         }
 
         document.body.removeClass('gotoverlay');
@@ -240,7 +234,21 @@ div.gpt-ad-fpi-container {
 
     s = document.createElement('script');
     s.setAttribute('src','//cdnjs.cloudflare.com/ajax/libs/hammer.js/2.0.8/hammer.min.js');
-    document.head.appendChild(s);
+    s.onload = function() {
+        hammertime = new Hammer(document.body);
+        hammertime.on('swipe', function(ev) {
+            switch (ev.direction) {
+                case Hammer.DIRECTION_LEFT:
+                    history.back();
+                    break;
+                case Hammer.DIRECTION_RIGHT:
+                    history.forward();
+                    break;
+            }
+            console.log(ev.direction);
+        });
+    };
+    document.body.appendChild(s);
 
 
     ff = f.bind(null, jQuery);
