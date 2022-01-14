@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         HWZ Ad Removal
 // @namespace    https://forums.hardwarezone.com.sg/ad-removal
-// @version      0.20
+// @version      0.21
 // @description  Remove Ads and whitespace removal
 // @author       You
 // @match        https://forums.hardwarezone.com.sg/*
@@ -239,10 +239,10 @@ div.gpt-ad-fpi-container {
         hammertime.on('swipe', function(ev) {
             switch (ev.direction) {
                 case Hammer.DIRECTION_LEFT:
-                    history.back();
+                    history.forward();
                     break;
                 case Hammer.DIRECTION_RIGHT:
-                    history.forward();
+                    history.back();
                     break;
             }
             console.log(ev.direction);
