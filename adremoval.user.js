@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         HWZ Ad Removal
 // @namespace    https://forums.hardwarezone.com.sg/ad-removal
-// @version      0.17
+// @version      0.18
 // @description  Remove Ads and whitespace removal
 // @author       You
 // @match        https://forums.hardwarezone.com.sg/*
@@ -62,21 +62,25 @@ function f($) {
                 return regex.test($(elem)[attr.method](attr.property));
             }
 
+            /* OWN BREW OF DETECTING GESTURE
             const slider = $(".focus-width")[0];
-
-
             slider.addEventListener('touchstart', e => {
                 touchstartX = e.changedTouches[0].screenX;
                 touchstartY = e.changedTouches[0].screenY;
                 scrollstartY = window.scrollY;
             })
-
             slider.addEventListener('touchend', e => {
                 touchendX = e.changedTouches[0].screenX;
                 touchendY = e.changedTouches[0].screenY;
                 scrollendY = window.scrollY;
                 handleGesture()
             })
+            */
+
+            let hammertime = new Hammer($(".focus-width")[0]);
+            hammertime.on('swipe', function(ev) {
+                console.log(ev);
+            });
         }
 
         document.body.removeClass('gotoverlay');
@@ -230,6 +234,10 @@ div.gpt-ad-fpi-container {
 
     s = document.createElement('script');
     s.setAttribute('src','//cdnjs.cloudflare.com/ajax/libs/loading-attribute-polyfill/1.5.4/loading-attribute-polyfill.min.js');
+    document.head.appendChild(s);
+
+    s = document.createElement('script');
+    s.setAttribute('src','//cdnjs.cloudflare.com/ajax/libs/hammer.js/2.0.8/hammer.min.js');
     document.head.appendChild(s);
 
 
