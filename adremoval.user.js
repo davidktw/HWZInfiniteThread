@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         HWZ Ad Removal
 // @namespace    https://forums.hardwarezone.com.sg/ad-removal
-// @version      0.23
+// @version      0.24
 // @description  Remove Ads and whitespace removal
 // @author       You
 // @match        https://forums.hardwarezone.com.sg/*
@@ -217,6 +217,7 @@ div.gpt-ad-fpi-container {
     s.setAttribute('src','//cdnjs.cloudflare.com/ajax/libs/jquery/3.6.1/jquery.slim.min.js');
     //s.setAttribute('integrity', 'sha512-yBpuflZmP5lwMzZ03hiCLzA94N0K2vgBtJgqQ2E1meJzmIBfjbb7k4Y23k2i2c/rIeSUGc7jojyIY5waK3ZxCQ==');
     s.setAttribute('defer', '');
+    s.async = false;
     document.head.appendChild(s);
     s = document.createElement('script');
     s.innerText = "jQuery.noConflict()";
@@ -225,11 +226,13 @@ div.gpt-ad-fpi-container {
     s = document.createElement('script');
     s.setAttribute('src','//cdnjs.cloudflare.com/ajax/libs/loading-attribute-polyfill/1.5.4/loading-attribute-polyfill.min.js');
     s.setAttribute('defer', '');
+    s.async = false;
     document.head.appendChild(s);
 
     s = document.createElement('script');
     s.setAttribute('src','//cdnjs.cloudflare.com/ajax/libs/hammer.js/2.0.8/hammer.min.js');
     s.setAttribute('defer', '');
+    s.async = false;
     //s.setAttribute('integrity', 'sha512-UXumZrZNiOwnTcZSHLOfcTs0aos2MzBWHXOHOuB0J/R44QB0dwY5JgfbvljXcklVf65Gc4El6RjZ+lnwd2az2g==');
     s.onload = function() {
         hammertime = new Hammer(document.body);
