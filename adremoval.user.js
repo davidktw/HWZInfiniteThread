@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         HWZ Ad Removal
 // @namespace    https://forums.hardwarezone.com.sg/ad-removal
-// @version      0.21
+// @version      0.22
 // @description  Remove Ads and whitespace removal
 // @author       You
 // @match        https://forums.hardwarezone.com.sg/*
@@ -22,6 +22,7 @@ var scrollstartY = 0
 var scrollendY = 0
 var timestart = new Date().getTime();
 var hammertime;
+var searchsettled = false;
 
 
 function handleGesture() {
@@ -81,28 +82,6 @@ function f($) {
 
         document.body.removeClass('gotoverlay');
         document.body.removeAttribute('style');
-        let ids = [
-            'hwz_ad_notice_cont', 'hwz_dynamic_widget', 'hwz-facebook-page-like', 'sponsored-links',
-            'cookie-notice', 'right-ads', 'ads-leaderboard', 'ads-bottom-leaderboard', 'div-gpt-ad-native',
-            'gwd-ad'
-        ];
-
-        ids.forEach(function(item,idx) {
-            try {
-                let i = document.getElementById(item);
-                if (i) i.remove();
-            } catch(err) { console.log(err) }
-        });
-
-
-        // remove the loading of javascript overriding of links
-        // that go to some kind of collector
-        $("script:regex(src, .*s\.skimresources\.com.*),\
-           script:regex(src, .*adtag\.sphdigital\.com.*),\
-           script:regex(src, .*secure\.quantserve\.com.*),\
-           script:regex(src, .*www\.googletagmanager\.com.*),\
-           script:regex(src, .*www\.googletagservices\.com.*),\
-           script:regex(src, .*sb\.scorecardresearch\.com.*)").remove();
 
         $("div.hwz-trending-block").parent().remove();
         $("div.shareButtons").parent().remove();
@@ -120,38 +99,51 @@ function f($) {
           #hwzForumRelated,\
           div:regex(id, ^gpt-ad-.*-container$),\
           div:regex(class, ^gpt-ad-.*-container$),\
-          div:regex(id, ^google_ads_iframe_.*)").remove();
+          div:regex(id, ^google_ads_iframe_.*),\
+          #sphm_overlay,\
+          #hwz_ad_notice_cont,\
+          #hwz_dynamic_widget,\
+          #hwz-facebook-page-like,\
+          #sponsored-links,\
+          #cookie-notice,\
+          #right-ads,\
+          #ads-leaderboard,\
+          #ads-bottom-leaderboard,\
+          #div-gpt-ad-native,\
+          #gwd-ad,\
+          script:regex(src, .*s\.skimresources\.com.*),\
+          script:regex(src, .*adtag\.sphdigital\.com.*),\
+          script:regex(src, .*secure\.quantserve\.com.*),\
+          script:regex(src, .*www\.googletagmanager\.com.*),\
+          script:regex(src, .*www\.googletagservices\.com.*),\
+          script:regex(src, .*sb\.scorecardresearch\.com.*)").remove();
 
-        Array.from(document.querySelectorAll("section.message-user")).each(i=>i.style.position='relative');
-
-        Array.from(document.querySelectorAll('a[href="/search/"]')).each(i=>{
-            let ni = i.cloneNode(true);
-            i.parentNode.replaceChild(ni, i);
-            ni.addEventListener('click', (event)=>{
-              event.preventDefault();
-              event.stopPropagation();
-              document.location.href = '/search/?type=post';
+        if (!searchsettled) {
+            Array.from(document.querySelectorAll("section.message-user")).each(i=>i.style.position='relative');
+            Array.from(document.querySelectorAll('a[href="/search/"]')).each(i=>{
+                let ni = i.cloneNode(true);
+                i.parentNode.replaceChild(ni, i);
+                ni.addEventListener('click', (event)=>{
+                    event.preventDefault();
+                    event.stopPropagation();
+                    document.location.href = '/search/?type=post';
+                });
+                searchsettled = true;
             });
-        });
+        }
 
         Array.from(document.querySelectorAll('li.notice img')).each(i=>{
             i.style.maxHeight = '50px';
         });
 
-        setTimeout(()=>{
+        //queueMicrotask(()=>{
             $("img").each(function (i,oo) {oo.setAttribute('loading','lazy')});
             document.querySelector("input[value=date]")?.click();
-        },0);
+        //});
     }
-
-    //n_runs++;
-    //console.debug(n_runs);
-    //if (n_runs < 20) {
-    //    setTimeout(ff, parseInt(50 * n_runs));
-    //}
 }
 
-(function() {
+void function() {
     'use strict';
 
     let s = document.createElement('style');
@@ -222,7 +214,8 @@ div.gpt-ad-fpi-container {
     document.head.appendChild(s);
 
     s = document.createElement('script');
-    s.setAttribute('src','//code.jquery.com/jquery-3.6.0.slim.min.js');
+    s.setAttribute('src','//cdnjs.cloudflare.com/ajax/libs/jquery/3.6.1/jquery.slim.min.js');
+    //s.setAttribute('integrity', 'sha512-yBpuflZmP5lwMzZ03hiCLzA94N0K2vgBtJgqQ2E1meJzmIBfjbb7k4Y23k2i2c/rIeSUGc7jojyIY5waK3ZxCQ==');
     document.head.appendChild(s);
     s = document.createElement('script');
     s.innerText = "jQuery.noConflict()";
@@ -234,6 +227,7 @@ div.gpt-ad-fpi-container {
 
     s = document.createElement('script');
     s.setAttribute('src','//cdnjs.cloudflare.com/ajax/libs/hammer.js/2.0.8/hammer.min.js');
+    //s.setAttribute('integrity', 'sha512-UXumZrZNiOwnTcZSHLOfcTs0aos2MzBWHXOHOuB0J/R44QB0dwY5JgfbvljXcklVf65Gc4El6RjZ+lnwd2az2g==');
     s.onload = function() {
         hammertime = new Hammer(document.body);
         hammertime.on('swipe', function(ev) {
@@ -250,18 +244,29 @@ div.gpt-ad-fpi-container {
     };
     document.body.appendChild(s);
 
-
-    ff = f.bind(null, jQuery);
+    if (jQuery) {
+        ff = f.bind(null, jQuery);
+    }
 
     // create a new instance of `MutationObserver` named `observer`,
     // passing it a callback function
     const observer = new MutationObserver(function(mutationList) {
         console.debug('callback that runs when observer is triggered ');
 
-        if (handler != null)
-            clearTimeout(handler);
-        handler = setTimeout(ff, 100);
-        if (new Date().getTime() - timestart > 1.5 * 1000)
+        let addednodes = 0;
+        for (const rec of mutationList)
+            addednodes += rec.addedNodes.length;
+
+        if (addednodes > 0) {
+            //if (handler != null)
+            //    clearTimeout(handler);
+            //handler = setTimeout(ff, 10);
+            queueMicrotask(ff);
+        }
+        else {
+            console.debug("Not calling FF");
+        }
+        if (new Date().getTime() - timestart > 4 * 1000)
             observer.disconnect();
 
     });
@@ -269,8 +274,8 @@ div.gpt-ad-fpi-container {
     // call `observe()` on that MutationObserver instance,
     // passing it the element to observe, and the options object
     observer.observe(document.body, {subtree: true, childList: true});
-    handler = setTimeout(ff, 100);
-})();
+    queueMicrotask(ff);
+}();
 
 /*
 window.addEventListener('load', (event) => {
