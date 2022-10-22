@@ -276,24 +276,3 @@ div.gpt-ad-fpi-container {
     observer.observe(document.body, {subtree: true, childList: true});
     queueMicrotask(ff);
 }();
-
-/*
-window.addEventListener('load', (event) => {
-  let search = document.querySelector("input[type=search][class=input]");
-  let mysearchlist = document.createElement("datalist");
-  mysearchlist.id = 'mysearchlist';
-  ['davidktw', 'laybit',
-   'programming', 'programmers', 'programmer',
-   'comp sci', 'computer science', 'computing',
-   'java', 'javascript', 'perl', 'php',
-   'database', 'sql',
-   'cloud', 'aws', 'azure', 'gcp' ].sort().forEach((v)=> {
-    let myopt = document.createElement('option');
-    myopt.value = v;
-    mysearchlist.appendChild(myopt);
-  });
-  document.body.appendChild(mysearchlist);
-  search?.setAttribute('list', 'mysearchlist');
-  console.log('DOM fully loaded and parsed', search);
-});
-*/
