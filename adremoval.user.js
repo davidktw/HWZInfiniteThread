@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         HWZ Ad Removal
 // @namespace    https://forums.hardwarezone.com.sg/ad-removal
-// @version      0.24
+// @version      0.25
 // @description  Remove Ads and whitespace removal
 // @author       You
 // @match        https://forums.hardwarezone.com.sg/*
@@ -209,6 +209,15 @@ div.gpt-ad-fpi-container {
   padding-top: 5px;
   padding-bottom: 5px;
 }
+@media (max-width: 650px) {
+  .pairs {
+    display: inline-block;
+  }
+  .structItem-cell.structItem-cell--meta .structItem-minor {
+    display: inline-block;
+    margin: 0 3px;
+  }
+}
 `;
     s.innerText = csstext.replaceAll(/[\r\n]/ig, "");
     document.head.appendChild(s);
@@ -245,7 +254,7 @@ div.gpt-ad-fpi-container {
                     history.back();
                     break;
             }
-            console.log(ev.direction);
+            console.debug(ev.direction);
         });
     };
     document.body.appendChild(s);
@@ -273,7 +282,7 @@ div.gpt-ad-fpi-container {
         else {
             console.debug("Not calling FF");
         }
-        if (new Date().getTime() - timestart > 4 * 1000)
+        if (new Date().getTime() - timestart > 10 * 1000)
             observer.disconnect();
 
     });
