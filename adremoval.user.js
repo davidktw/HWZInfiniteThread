@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         HWZ Ad Removal
 // @namespace    https://forums.hardwarezone.com.sg/ad-removal
-// @version      0.26
+// @version      0.27
 // @description  Remove Ads and whitespace removal
 // @author       You
 // @match        https://forums.hardwarezone.com.sg/*
@@ -111,6 +111,7 @@ function f($) {
           #ads-bottom-leaderboard,\
           #div-gpt-ad-native,\
           #gwd-ad,\
+          div:regex(id, ^div-gpt-ad),\
           script:regex(src, .*s\.skimresources\.com.*),\
           script:regex(src, .*adtag\.sphdigital\.com.*),\
           script:regex(src, .*secure\.quantserve\.com.*),\
@@ -147,6 +148,13 @@ void function() {
     'use strict';
 
     let s = document.createElement('style');
+    let csstext = `
+body.gotoverlay {
+  overflow-y: scroll !important;
+}
+`;
+    s.innerText = csstext.replaceAll(/[\r\n]/ig, "");
+    document.body.appendChild(s);
 
     s = document.createElement('script');
     s.setAttribute('src','//cdnjs.cloudflare.com/ajax/libs/jquery/3.6.1/jquery.slim.min.js');
@@ -169,9 +177,11 @@ void function() {
     s.setAttribute('defer', '');
     s.async = false;
     //s.setAttribute('integrity', 'sha512-UXumZrZNiOwnTcZSHLOfcTs0aos2MzBWHXOHOuB0J/R44QB0dwY5JgfbvljXcklVf65Gc4El6RjZ+lnwd2az2g==');
-    s.onload = function() {
+    s.onload = function(event) {
         hammertime = new Hammer(document.body);
         hammertime.on('swipe', function(ev) {
+            //console.debug("XXXXXXXXXXXXXXXXXXXX");
+            //console.debug(ev.target);
             switch (ev.direction) {
                 case Hammer.DIRECTION_LEFT:
                     history.forward();
@@ -208,8 +218,10 @@ void function() {
         else {
             console.debug("Not calling FF");
         }
-        if (new Date().getTime() - timestart > 10 * 1000)
-            observer.disconnect();
+        //if (new Date().getTime() - timestart > 10 * 1000) {
+        //    observer.disconnect();
+        //    console.debug("Observer Disconnected");
+        //}
 
     });
 
@@ -217,5 +229,8 @@ void function() {
     // passing it the element to observe, and the options object
     observer.observe(document.body, {subtree: true, childList: true});
     queueMicrotask(ff);
+    setTimeout(() => {
+        observer.disconnect();
+        console.debug("Observer Disconnected");
+    }, 10 * 1000);
 }();
-
